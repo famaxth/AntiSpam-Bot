@@ -15,12 +15,6 @@ The bot I created allows you to prevent bot attacks. It can block them and delet
 pip install pyTelegramBotApi
 ```
 ```
-pip install requests
-```
-```
-pip install SimpleQIWI
-```
-```
 python app.py
 ```
 Congratulations! The bot is running.
