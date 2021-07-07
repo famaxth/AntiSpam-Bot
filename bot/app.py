@@ -25,9 +25,6 @@ logger.info('Бот начал работу!', name='Bot')
 db.init_db()
 
 
-def foo(item):
-    return item[0]
-
 
 def scan_message(text):
     result = None
@@ -68,20 +65,24 @@ def bot_command_help(message):
 
 @bot.message_handler(content_types=['new_chat_members'])
 def greeting(message):
-    if message.from_user.id != user0:
+    if str(message.from_user.id) != user0:
         black_list = db.return_black_list()
         try:
-            blacklist = list(foo, black_list)
+            blacklist = list(black_list)
         except Exception as e:
             print(e)
-        if str(message.from_user.id) not in black_list:
+        if str(message.from_user.id) not in str(blacklist):
             try:
-                if message.from_user.first_name or message.from_user.last_name not in bad_words:
-                    print("New chat member")
-                else:
-                    db.add_user(message.from_user.first_name, message.from_user.last_name, message.from_user.id)
-                    bot.send_message(message.chat.id, "Мы удалили из чата ХХХ араба @{}.\nТут не приветствуются Арабы!".format(message.from_user.username), parse_mode='HTML')
-                    bot.kick_chat_member(message.chat.id, message.from_user.id)
+                text_save = str(message.from_user.first_name) + str(message.from_user.last_name)
+                text = text_save.translate(config.regexp).lower()
+                text = config.emoji_pattern.sub(r'', text).split(' ')
+                for word in text:
+                    result = scan_message(word)
+                    if result:
+                        db.add_user(str(message.from_user.first_name), str(message.from_user.last_name), str(message.from_user.id))
+                        bot.send_message(message.chat.id, "Мы удалили из чата ХХХ араба @{}.\nТут не приветствуются Арабы!".format(message.from_user.username), parse_mode='HTML')
+                        bot.kick_chat_member(message.chat.id, message.from_user.id)
+
             except Exception as e:
                 print(e)
 
@@ -120,8 +121,8 @@ def bot_new_message(message):
         result = scan_message(word)
         if result:
             bot.delete_message(message.chat.id, message.message_id)
-            if message.from_user.id != user0:
-                db.add_user(str(message.from_user.first_name), str(message.from_user.last_name), int(message.from_user.id))
+            if str(message.from_user.id) != user0:
+                db.add_user(str(message.from_user.first_name), str(message.from_user.last_name), str(message.from_user.id))
                 bot.send_message(message.chat.id, "Мы удалили из чата ХХХ араба @{}.\nТут не приветствуются Арабы!".format(message.from_user.username), parse_mode='HTML')
                 bot.kick_chat_member(message.chat.id, message.from_user.id)
 

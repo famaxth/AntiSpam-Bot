@@ -29,7 +29,7 @@ def init_db(conn, force: bool = False):
         id              INTEGER PRIMARY KEY,
         first_name                   STRING,
         last_name                    STRING,
-        user_id                    INTEGER);
+        user_id                     STRING);
     """)
 
     conn.commit()
