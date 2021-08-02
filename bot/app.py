@@ -1,29 +1,21 @@
 # -*- coding: utf-8 -*-
 
-#Production by Famaxth
-#Telegram - @por0vos1k
-
+import telebot
+from telebot import types
 
 import db
-import telebot
 import config
 import app_logger
-from telebot import types
 from bad_words import bad_words
 
 
 user0 = config.admin_id
-
 bot = telebot.TeleBot(config.token, parse_mode='HTML')
-
 bot_info = bot.get_me()
 
 logger = app_logger.get_logger(__name__)
-
 logger.info('Бот начал работу!', name='Bot')
-
 db.init_db()
-
 
 
 def scan_message(text):
@@ -32,7 +24,6 @@ def scan_message(text):
         if symbol in text:
             result = symbol
     return result
-
 
 
 def start_keyboard():
@@ -44,13 +35,11 @@ def start_keyboard():
     return keyboard
 
 
-
 @bot.message_handler(commands=['start'])
 def bot_command_start(message):
     if message.chat.type == 'private':
         keyboard = start_keyboard()
         bot.send_message(message.chat.id, "<a>Привет!\nЯ <b>AntiArabBot</b> - Бот, который следит за порядком в твоем чате.\n<b>Ни один араб мимо меня не пройдет!</b>\n\nЧтобы узнать о всех моих функциях — пиши /help.</a>", parse_mode = 'HTML', reply_markup=keyboard)
-
 
 
 @bot.message_handler(commands=['help'])
@@ -60,7 +49,6 @@ def bot_command_help(message):
         but_1 = types.InlineKeyboardButton(text="Главное Меню", callback_data="Главное Меню")
         keyboard.row(but_1)
         bot.send_message(message.chat.id, """<a><b>Часто администраторы сталкиваются со спамом, чтобы справляться с такой проблемой, нужно прибегать к высшим силам, для этого есть я.</b>\n\nДля чего я сделан:\nБот сделан исключительно для устранения спама от "арабов". Мои функции помогут защитить чат от аккаунтов, но не от ботов.\n\nЧто я умею: \n1. Удаляю сообщения с содержанием арабских иероглифов, именно такие символы часто используют спамеры.\n2: Блокирую пользователей с арабскими именами, здесь аналогичная ситуация.\n\n\nЧто для этого нужно: \nТебе достаточно просто добавить меня в группу и чтобы меня активировать, нужно выдать мне права на удаления сообщений и на блокировку пользователей в вашем чате. И после этих всех действий — я с радостью начну работать во благо чата.</a>""", parse_mode = 'HTML', reply_markup = keyboard)
-
 
 
 @bot.message_handler(content_types=['new_chat_members'])
@@ -82,13 +70,10 @@ def greeting(message):
                         db.add_user(str(message.from_user.first_name), str(message.from_user.last_name), str(message.from_user.id))
                         bot.send_message(message.chat.id, "Мы удалили из чата ХХХ араба @{}.\nТут не приветствуются Арабы!".format(message.from_user.username), parse_mode='HTML')
                         bot.kick_chat_member(message.chat.id, message.from_user.id)
-
             except Exception as e:
                 print(e)
-
         else:
             bot.kick_chat_member(message.chat.id, message.from_user.id)
-
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -102,7 +87,6 @@ def callback_inline(call):
         elif call.data == 'Главное Меню':
             keyboard = start_keyboard()
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="<a>Привет!\nЯ <b>AntiArabBot</b> - Бот, который следит за порядком в твоем чате.\n<b>Ни один араб мимо меня не пройдет!</b>\n\nЧтобы узнать о всех моих функциях — пиши /help.</a>", parse_mode = 'HTML', reply_markup=keyboard)
-
 
 
 @bot.message_handler(content_types=config.all_content_types)
@@ -127,7 +111,6 @@ def bot_new_message(message):
                 bot.kick_chat_member(message.chat.id, message.from_user.id)
 
 
-
 @bot.message_handler(content_types=['new_chat_members'])
 def bot_join(message):
     for user in message.new_chat_members:
@@ -135,13 +118,11 @@ def bot_join(message):
             logger.info(f'Пригласили в группу {message.chat.title}', name=message.from_user.first_name)
 
 
-
 @bot.message_handler(content_types=['left_chat_member'])
 def bot_left(message):
     user = message.left_chat_member
     if user.id == bot_info.id:
         logger.info(f'Выкинули из группы {message.chat.title}', name=message.from_user.first_name)
-
 
 
 if __name__ == '__main__':
