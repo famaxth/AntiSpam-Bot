@@ -5,9 +5,7 @@ import json
 import logging
 
 admin_id = "text" # ID администратора
-
 token = 'text' # Токен бота
-
 group = "https://t.me/por0vos1k" # Ссылка на группу с новостями
 
 
