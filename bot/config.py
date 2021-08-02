@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 
-#Production by Famaxth
-#Telegram - @por0vos1k
-
-
+import re
 import json
 import logging
-import re
 
-admin_id = "text" #ID администратора
+admin_id = "text" # ID администратора
 
-token = 'text' #Токен бота
+token = 'text' # Токен бота
 
-group = "https://t.me/por0vos1k" #Ссылка на группу с новостями
+group = "https://t.me/por0vos1k" # Ссылка на группу с новостями
 
 
 _log_format = f"%(asctime)s - [%(levelname)s] - %(name)s - (%(filename)s).(%(lineno)d) - %(message)s"
